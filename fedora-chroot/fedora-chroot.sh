@@ -12,7 +12,7 @@ mount_fs()
 	mount -t devtmpfs foo "${ROOT}/dev"
 }
 
-unmount()
+umount_fs()
 {
 	umount "${ROOT}/"{proc,sys,dev}
 }
@@ -28,11 +28,12 @@ install()
 	ln -s "${ROOT}/etc/pki" "/etc/pki"
 	sleep 0.1
 	echo -e "\nFedora packages will be downloaded now. Please be patient, this may take a while."
-	yum -y --installroot "${ROOT}" install yum git mingw32-qt5-qtbase mingw32-eigen3 cmake make
+	yum -y --installroot "${ROOT}" install ${PACKAGES}
 	rm "/etc/pki"
 	
 	mount_fs;
 	chroot "${ROOT}" /usr/bin/install.sh
+	umount_fs;
 	
 	print_run_info;
 }
@@ -44,16 +45,25 @@ upgrade()
 
 remove()
 {
-	echo "Removing Fedora chroot from '${ROOT}'..."
-	
-	unmount;
-	rm -r "${ROOT}"
+	echo "Do you want to delete Fedora chroot from '${ROOT}'?"
+	select yn in "Delete" "Leave"; do
+		case $yn in
+		Delete)
+			echo "Deleting Fedora chroot..."
+			umount_fs;
+			rm -r "${ROOT}";
+			break;;
+		Leave)
+			break;;
+		esac
+	done
 }
 
 run()
 {
 	mount_fs;
 	chroot "${ROOT}"
+	umount_fs;
 }
 
 case "$1" in
