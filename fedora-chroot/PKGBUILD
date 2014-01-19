@@ -5,6 +5,7 @@ pkgname=fedora-chroot
 pkgver=20
 pkgrel=2
 pkgdesc="Fedora chroot environment."
+url="https://fedoraproject.org/"
 arch=('i686' 'x86_64')
 license=('BSD-3')
 depends=('rpm-org' 'yum')
