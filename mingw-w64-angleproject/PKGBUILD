@@ -1,9 +1,9 @@
 # Contributor: Filip Brcic <brcha@gna.org>
+# Contributor: xantares
 # Contributor: jellysheep <max.mail@dameweb.de>
 
-_svn_revision=2215
 pkgname=mingw-w64-angleproject
-pkgver="1.0.0.r${_svn_revision}"
+pkgver=1.0.0.r2215
 pkgrel=1
 pkgdesc='Angle project (mingw-w64)'
 arch=('any')
@@ -11,13 +11,13 @@ url='http://code.google.com/p/angleproject/'
 license=('LGPLv2+')
 makedepends=('mingw-w64-gcc' 'gyp-svn')
 options=('!strip' '!buildflags' 'staticlibs')
-source=("angleproject-r${_svn_revision}.tar.bz2"
+source=("angleproject::git+https://code.google.com/p/angleproject/"
         'angleproject-fix-case-sensitive-include.patch'
         'angleproject-include-import-library-and-use-def-file.patch'
         'angleproject-fix-mingw-compatibility.patch'
         'angleproject-fix-typedefs-for-win64.patch'
         'angleproject-export-shader-symbols.patch')
-md5sums=('ed7c61ccf10d14b2dad3d466b799f991'
+md5sums=('SKIP'
          '3c66f4870446b66b4782a37dc580f5ba'
          '65b24ba01b681ab4e59e117503937f82'
          '10b197b483a543fcf7e1ae5ec379848f'
@@ -26,8 +26,18 @@ md5sums=('ed7c61ccf10d14b2dad3d466b799f991'
 
 _architectures="i686-w64-mingw32 x86_64-w64-mingw32"
 
+pkgver() {
+	cd "${srcdir}/angleproject"
+	git checkout origin/legacy > /dev/null
+	git checkout 5abbd86 > /dev/null
+	head -n 4 src/common/version.h | sed -e 's/BUILD_REVISION /BUILD_REVISION r/' -e 's/.* //' | tr '\n' '.' | sed -e 's/.$/\n/' -e 's/r2214/r2215/'
+}
+
 prepare () {
 	cd "${srcdir}/angleproject"
+	
+	git checkout origin/legacy
+	git checkout 5abbd86
 
 	# File names are case-sensitive on Linux
 	patch -p0 -i "${srcdir}"/angleproject-fix-case-sensitive-include.patch
