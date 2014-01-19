@@ -4,7 +4,7 @@
 
 pkgname=mingw-w64-angleproject
 pkgver=1.0.0.r2215
-pkgrel=1
+pkgrel=2
 pkgdesc='Angle project (mingw-w64)'
 arch=('any')
 url='http://code.google.com/p/angleproject/'
