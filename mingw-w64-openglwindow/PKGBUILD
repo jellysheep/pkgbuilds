@@ -1,0 +1,55 @@
+
+# Maintainer: Max Mertens <mail at sheepstyle dot comeze dot com> 
+
+pkgname=mingw-w64-openglwindow
+pkgver=1
+pkgrel=1
+pkgdesc="OpenGLWindow Qt example. (mingw-w64)"
+arch=('any')
+url=""
+license=('unknown')
+depends=('mingw-w64-crt' 'mingw-w64-qt5-base')
+makedepends=('mingw-w64-gcc')
+options=('!strip' '!buildflags' 'staticlibs')
+
+source=("openglwindow.tar.bz2")
+
+md5sums=('SKIP')
+
+_architectures="i686-w64-mingw32"
+# x86_64-w64-mingw32"
+
+isInternalAngle()
+{
+	pacman -Q mingw-w64-qt5-base-internal-angle 2>/dev/null >/dev/null
+	[ "$?" -eq "0" ] && true || false
+}
+
+build()
+{
+	unset LDFLAGS
+	CORE_COUNT="$(nproc)"
+
+	cd "${srcdir}/openglwindow"
+	for _arch in ${_architectures}; do
+		mkdir -p build-${_arch}
+		pushd build-${_arch}
+		${_arch}-qmake-qt5 ../openglwindow.pro
+		isInternalAngle && sed -i "s/-lEGL/-llibEGL/" Makefile.Release
+		isInternalAngle && sed -i "s/-lGLESv2/-llibGLESv2/" Makefile.Release
+		make -j"${CORE_COUNT}"
+		popd
+	done
+}
+
+package()
+{
+	for _arch in ${_architectures}; do
+		cd "${srcdir}/openglwindow/build-${_arch}"
+		mkdir -p "${pkgdir}/usr/${_arch}/bin/platforms/"
+		install "${srcdir}/openglwindow/build-${_arch}/release/openglwindow.exe" "${pkgdir}/usr/${_arch}/bin/"
+		ln -s /usr/${_arch}/lib/qt5/plugins/platforms/qwindows.dll "${pkgdir}/usr/${_arch}/bin/platforms/"
+		ln -s /usr/${_arch}/lib/libstdc++-6.dll "${pkgdir}/usr/${_arch}/bin/"
+	done
+	ln -s /usr/i686-w64-mingw32/lib/libgcc_s_sjlj-1.dll "${pkgdir}/usr/i686-w64-mingw32/bin/"
+}

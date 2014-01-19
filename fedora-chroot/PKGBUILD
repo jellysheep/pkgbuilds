@@ -1,0 +1,55 @@
+# Maintainer: jellysheep <max.mail@dameweb.de> 
+
+pkgname=fedora-chroot
+pkgver=20
+pkgrel=1
+pkgdesc="Fedora ch_tmp_root environment."
+arch=('i686' 'x86_64')
+url="https://github.com/falconindy/expac"
+license=('BSD-3')
+depends=('rpm-org')
+makedepends=('yum')
+options=()
+install=fedora-chroot.install
+
+source=("fedora-chroot.install"
+		"fedora-chroot.sh"
+		"install.sh"
+		"resolv.conf")
+md5sums=("SKIP"
+		"SKIP"
+		"SKIP"
+		"SKIP")
+
+[ "$CARCH" == "i686" ] && {
+	source+=("ftp://195.220.108.108/linux/fedora/linux/releases/${pkgver}/Everything/i386/os/Packages/f/fedora-release-${pkgver}-1.noarch.rpm")
+	md5sums+=("256da421a8e6ba746e98d2ebf3075d73")
+}
+[ "$CARCH" == "x86_64" ] && {
+	source+=("ftp://195.220.108.108/linux/fedora/linux/releases/${pkgver}/Everything/x86_64/os/Packages/f/fedora-release-${pkgver}-1.noarch.rpm")
+	md5sums+=("256da421a8e6ba746e98d2ebf3075d73")
+}
+
+_install_root="/hdd/Fedora/${pkgname}"
+_users="user"
+
+build()
+{
+	sed -i -e "s\\\${ROOT}\\${_install_root}\\g" "${srcdir}/fedora-chroot.sh"
+	sed -i -e "s\\\${FEDORA_RELEASE_RPM}\\fedora-release-${pkgver}-1.noarch.rpm\\g" "${srcdir}/fedora-chroot.sh"
+	for user in $_users; do
+		echo "/usr/sbin/useradd -m -g users '$user'" >> "${srcdir}/install.sh"
+	done
+}
+
+package()
+{
+	mkdir -p "${pkgdir}${_install_root}/"{,/usr/bin,etc}
+	cp "${srcdir}/fedora-release-${pkgver}-1.noarch.rpm" "${pkgdir}${_install_root}/fedora-release-${pkgver}-1.noarch.rpm"
+	cp "${srcdir}/resolv.conf" "${pkgdir}${_install_root}/etc/resolv.conf"
+	cp "${srcdir}/install.sh" "${pkgdir}${_install_root}/usr/bin/install.sh"
+	chmod +x "${pkgdir}${_install_root}/usr/bin/install.sh"
+	mkdir -p "${pkgdir}/usr/bin"
+	cp "${srcdir}/fedora-chroot.sh" "${pkgdir}/usr/bin/"
+	chmod +x "${pkgdir}/usr/bin/fedora-chroot.sh"
+}
