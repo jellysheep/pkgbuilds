@@ -18,26 +18,26 @@ source=(http://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-rele
 md5sums=('df0e7657f46cbd59ed9cbe2a50c66e15')
 
 build() {
-  cd ${srcdir}
-  for _target in ${_targets}; do
-    msg "Building ${_target} CRT"
-    if [ ${_target} == "i686-w64-mingw32" ]; then
-        _crt_configure_args="--disable-lib64 --enable-lib32"
-    elif [ ${_target} == "x86_64-w64-mingw32" ]; then
-        _crt_configure_args="--disable-lib32 --enable-lib64"
-    fi
-    mkdir -p ${srcdir}/crt-${_target} && cd ${srcdir}/crt-${_target}
-    ${srcdir}/mingw-w64-v${pkgver}/mingw-w64-crt/configure --prefix=/usr/${_target} \
-        --host=${_target} --enable-wildcard \
-        ${_crt_configure_args}
-    make
-  done
+	cd ${srcdir}
+	for _target in ${_targets}; do
+		msg "Building ${_target} CRT"
+		if [ ${_target} == "i686-w64-mingw32" ]; then
+			_crt_configure_args="--disable-lib64 --enable-lib32"
+		elif [ ${_target} == "x86_64-w64-mingw32" ]; then
+			_crt_configure_args="--disable-lib32 --enable-lib64"
+		fi
+		mkdir -p ${srcdir}/crt-${_target} && cd ${srcdir}/crt-${_target}
+		${srcdir}/mingw-w64-v${pkgver}/mingw-w64-crt/configure --prefix=/usr/${_target} \
+			--host=${_target} --enable-wildcard \
+			${_crt_configure_args}
+		make
+	done
 }
 
 package() {
-  for _target in ${_targets}; do
-    msg "Installing ${_target} crt"
-    cd ${srcdir}/crt-${_target}
-    make DESTDIR=${pkgdir} install
-  done
+	for _target in ${_targets}; do
+		msg "Installing ${_target} crt"
+		cd ${srcdir}/crt-${_target}
+		make DESTDIR=${pkgdir} install
+	done
 }
