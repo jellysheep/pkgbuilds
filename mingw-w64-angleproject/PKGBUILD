@@ -4,7 +4,7 @@
 
 pkgname=mingw-w64-angleproject
 pkgver=1.0.0.r2215
-pkgrel=2
+pkgrel=3
 pkgdesc='Angle project (mingw-w64)'
 arch=('any')
 url='http://code.google.com/p/angleproject/'
@@ -16,13 +16,15 @@ source=("angleproject::git+https://code.google.com/p/angleproject/"
         'angleproject-include-import-library-and-use-def-file.patch'
         'angleproject-fix-mingw-compatibility.patch'
         'angleproject-fix-typedefs-for-win64.patch'
-        'angleproject-export-shader-symbols.patch')
+        'angleproject-export-shader-symbols.patch'
+        'angleproject-auto-load-d3dcompiler-library.patch')
 md5sums=('SKIP'
          '3c66f4870446b66b4782a37dc580f5ba'
          '65b24ba01b681ab4e59e117503937f82'
          '10b197b483a543fcf7e1ae5ec379848f'
          '20272d2b46091f629962f4f597973ff5'
-         'b238dae4afc4480ea84c9107dccfd6f1')
+         'b238dae4afc4480ea84c9107dccfd6f1'
+         'd60be2fee27a271e1a6b91367b128c7c')
 
 _architectures="i686-w64-mingw32 x86_64-w64-mingw32"
 
@@ -50,6 +52,10 @@ prepare () {
 	# This static library is linked into the libGLESv2 shared library
 	# To allow building WebKit export the required symbols in the libGLESv2 shared library
 	patch -p0 -i "${srcdir}"/angleproject-export-shader-symbols.patch
+
+	# https://bugzilla.redhat.com/show_bug.cgi?id=1057983
+	# Fix Angle to load d3dcompiler_43.dll automatically
+	patch -p1 -i "${srcdir}"/angleproject-auto-load-d3dcompiler-library.patch
 }
 
 build() {
