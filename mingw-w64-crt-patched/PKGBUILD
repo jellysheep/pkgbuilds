@@ -5,7 +5,7 @@
 
 _targets="i686-w64-mingw32 x86_64-w64-mingw32"
 
-pkgname=mingw-w64-crt
+pkgname=mingw-w64-crt-patched
 pkgver=3.1.0
 pkgrel=2
 pkgdesc='MinGW-w64 CRT for Windows'
