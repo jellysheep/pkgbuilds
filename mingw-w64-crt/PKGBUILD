@@ -1,6 +1,7 @@
 # $Id: PKGBUILD 103974 2014-01-14 11:36:51Z spupykin $
 # Maintainer: Sergej Pupykin <pupykin.s+arch@gmail.com>
 # Maintainer: rubenvb vanboxem <dottie> ruben <attie> gmail <dottie> com
+# Contributor: jellysheep <max.mail@dameweb.de>
 
 _targets="i686-w64-mingw32 x86_64-w64-mingw32"
 
@@ -26,6 +27,7 @@ md5sums=('df0e7657f46cbd59ed9cbe2a50c66e15'
 build() {
 	cd ${srcdir}/mingw-w64-v${pkgver}
 	# See https://bugzilla.redhat.com/show_bug.cgi?id=1054481
+	# 0001-Add-secapi-wrapper-for-sprintf_s.patch was adapted to match sources
 	patch -p1 < ${srcdir}/0001-Add-secapi-wrapper-for-sprintf_s.patch
 	patch -p1 < ${srcdir}/0001-Add-_gmtime32-and-_localtime32-to-lib64-msvcrt.def.patch
 	patch -p1 < ${srcdir}/0002-Remove-rand_s-and-vsprintf_s-from-msvcrt.def.in.patch
