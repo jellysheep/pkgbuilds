@@ -10,7 +10,7 @@ url='http://nanomsg.org/'
 license=('MIT')
 source=('git://github.com/nanomsg/cppnanomsg.git')
 md5sums=('SKIP')
-arch=('any')
+arch=('i686' 'x86_64')
 depends=('nanomsg')
 makedepends=('git')
 checkdepends=('cmake')
@@ -32,5 +32,5 @@ check() {
 
 package() {
 	install -Dm644 "${srcdir}/${_pkgname}/nn.hpp" "${pkgdir}/usr/include/nanomsg/nn.hpp"
-	install -Dm644 "${srcdir}/${_pkgname}/COPYING" "${pkgdir}/usr/share/licenses/$pkgname/COPYING"
+	install -Dm644 "${srcdir}/${_pkgname}/COPYING" "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
 }
